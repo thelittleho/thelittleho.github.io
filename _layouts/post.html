@@ -1,0 +1,53 @@
+---
+layout: default
+---
+
+<article class="post-detail">
+  <div class="post-header-box">
+    <div class="post-meta-top">
+      <span class="card-tag">{{ page.categories[0] | default: '독서' }}</span>
+      <span class="card-date">{{ page.date | date: "%Y년 %m월 %d일" }}</span>
+    </div>
+    <h1 class="post-page-title">{{ page.title }}</h1>
+    {% if page.subtitle %}
+    <p class="post-page-subtitle">{{ page.subtitle }}</p>
+    {% endif %}
+  </div>
+
+  {% if page.book_info %}
+  <div class="book-spotlight">
+    {% assign cat_name = page.categories[0] | default: '독서' %}
+    <div class="mini-book-wrapper">
+      {% if page.book_info.cover_url %}
+      <div class="real-book-cover" style="width: 88px; height: 126px;">
+        <img src="{{ page.book_info.cover_url | relative_url }}" alt="{{ page.book_info.title }}" class="real-book-img">
+        <div class="real-book-spine-crease"></div>
+      </div>
+      {% else %}
+      <div class="mini-book-cover mini-book-{{ cat_name }}" style="width: 86px; height: 122px;">
+        <div class="mini-book-ribbon"></div>
+        <div class="mini-book-spine-crease"></div>
+        <div class="mini-book-inner" style="padding: 6px 4px;">
+          <span class="mini-book-symbol">🌿</span>
+          <div class="mini-book-title" style="font-size: 0.78rem;">{{ page.book_info.title }}</div>
+          <div class="mini-book-author" style="font-size: 0.65rem;">{{ page.book_info.author }}</div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    <div class="book-spotlight-info">
+      <h4>『{{ page.book_info.title }}』</h4>
+      <p>저자: {{ page.book_info.author }} · 출판사: {{ page.book_info.publisher | default: "기타" }}</p>
+      <div class="book-stars">평점: ★ {{ page.book_info.rating | default: "5.0" }} · 완독: {{ page.book_info.read_date | default: page.date | date: "%Y.%m" }}</div>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="post-body">
+    {{ content }}
+  </div>
+
+  <div style="margin-top: 60px; text-align: center;">
+    <a href="{{ '/' | relative_url }}" class="tab-btn" style="display: inline-block;">← 서재 목록으로 돌아가기</a>
+  </div>
+</article>

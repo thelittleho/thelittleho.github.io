@@ -1,0 +1,78 @@
+---
+layout: default
+---
+
+<div class="bookshelf-wrapper">
+  <header class="bookshelf-header">
+    <div class="hero-badge">📚 나의 아날로그 북 타워</div>
+    <h1 class="bookshelf-title">사유가 차곡차곡 쌓여가는 책장</h1>
+    <p class="bookshelf-subtitle">
+      침대 맡과 책상 위에 한 권씩 다 읽고 조심스럽게 쌓아 올린 책들입니다.<br>
+      책등을 클릭하면 해당 도서의 깊은 서평으로 이동합니다.
+    </p>
+
+    <!-- Reading Stats Strip -->
+    <div class="reading-stats-strip">
+      <div class="stat-item">
+        <span>완독하여 쌓아 올린 책</span>
+        <strong>{{ site.posts.size }}권</strong>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span>평균 평점</span>
+        <strong style="color: var(--accent-amber);">★ 4.9</strong>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span>지식의 높이</span>
+        <strong>1,680 pages</strong>
+      </div>
+    </div>
+  </header>
+
+  <!-- The Stacked Book Stage -->
+  <div class="book-tower-stage">
+    <div class="book-tower">
+      {% assign spine_count = 0 %}
+      {% for post in site.posts %}
+        {% if post.book_info %}
+          {% assign spine_count = spine_count | plus: 1 %}
+          {% assign theme_num = spine_count | modulo: 5 | plus: 1 %}
+          
+          {% case spine_count %}
+            {% when 1 %}
+              {% assign spine_width = "96%" %}
+            {% when 2 %}
+              {% assign spine_width = "91%" %}
+            {% when 3 %}
+              {% assign spine_width = "98%" %}
+            {% when 4 %}
+              {% assign spine_width = "88%" %}
+            {% when 5 %}
+              {% assign spine_width = "94%" %}
+            {% else %}
+              {% assign spine_width = "93%" %}
+          {% endcase %}
+
+          <a href="{{ post.url | relative_url }}" class="stacked-book-link" style="width: {{ spine_width }};">
+            <div class="book-spine spine-theme-{{ theme_num }}">
+              <div class="spine-ribbon"></div>
+              <div class="spine-left">
+                <span class="spine-cat-chip">{{ post.categories[0] | default: '독서' }}</span>
+                <span class="spine-title">『{{ post.book_info.title }}』</span>
+                <span class="spine-author">{{ post.book_info.author }}</span>
+              </div>
+              <div class="spine-right">
+                <span class="spine-rating">★ {{ post.book_info.rating | default: "5.0" }}</span>
+                <span class="spine-hover-hint">서평 펼치기 📖 →</span>
+              </div>
+            </div>
+          </a>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <!-- The Wooden Pedestal at the bottom -->
+    <div class="wooden-pedestal"></div>
+  </div>
+</div>

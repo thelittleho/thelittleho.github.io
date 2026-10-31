@@ -1,0 +1,13 @@
+<div id="reading-progress"></div>
+<header class="site-header">
+  <div class="header-container">
+    <a href="{{ '/' | relative_url }}" class="brand-logo">
+      <div class="brand-icon">🍃</div>
+      <span>{{ site.title | default: "The Little Forest" }}</span>
+    </a>
+    <nav class="site-nav">
+      <a href="{{ '/' | relative_url }}" class="nav-link {% if page.url == '/' %}active{% endif %}">서재</a>
+      <a href="{{ '/bookshelf/' | relative_url }}" class="nav-link {% if page.url == '/bookshelf/' %}active{% endif %}">책장</a>
+    </nav>
+  </div>
+</header>

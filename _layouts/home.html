@@ -1,0 +1,77 @@
+---
+layout: default
+---
+
+<section class="hero-section">
+  <div class="hero-badge">🌱 사유와 기록의 안식처</div>
+  <h1 class="hero-title">숲의 고요함 속에서<br>읽고, 사유하고, 기록합니다.</h1>
+  <p class="hero-desc">
+    바쁜 일상에서 벗어나 책의 깊은 문장과 생각을 차분하게 정리하는 서재입니다. 
+    마음을 채운 독서 기록은 훗날 단단한 지식과 기술적 통찰로 이어집니다.
+  </p>
+</section>
+
+<!-- Category Filtering Tabs -->
+<div class="filter-tabs">
+  <button class="tab-btn active" onclick="filterCategory('all', this)">모든 기록 ({{ site.posts.size }})</button>
+  <button class="tab-btn" onclick="filterCategory('인문', this)">인문 · 사색</button>
+  <button class="tab-btn" onclick="filterCategory('문학', this)">소설 · 문학</button>
+  <button class="tab-btn" onclick="filterCategory('성장', this)">성장 · 자기계발</button>
+  <button class="tab-btn" onclick="filterCategory('기술', this)">기술 · 개발 노트</button>
+</div>
+
+<!-- Posts Grid -->
+<div class="posts-grid">
+  {% for post in site.posts %}
+  <article class="post-card" data-category="{{ post.categories[0] | default: '기타' }}">
+    <a href="{{ post.url | relative_url }}">
+      <div class="card-banner">
+        {% assign cat_name = post.categories[0] | default: '독서' %}
+        <div class="mini-book-wrapper">
+          {% if post.book_info.cover_url %}
+          <div class="real-book-cover">
+            <img src="{{ post.book_info.cover_url | relative_url }}" alt="{{ post.book_info.title }}" class="real-book-img">
+            <div class="real-book-spine-crease"></div>
+          </div>
+          {% else %}
+          <div class="mini-book-cover mini-book-{{ cat_name }}">
+            <div class="mini-book-ribbon"></div>
+            <div class="mini-book-spine-crease"></div>
+            <div class="mini-book-inner">
+              <span class="mini-book-symbol">
+                {% if post.categories contains '인문' %}🌿
+                {% elsif post.categories contains '문학' %}✧
+                {% elsif post.categories contains '기술' %}◈
+                {% elsif post.categories contains '성장' %}🌱
+                {% else %}✦{% endif %}
+              </span>
+              <div class="mini-book-title">{{ post.book_info.title | default: post.title }}</div>
+              <div class="mini-book-author">{{ post.book_info.author | default: "The Little Forest" }}</div>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </a>
+    <div class="card-content">
+      <div class="card-meta">
+        <span class="card-tag">{{ post.categories[0] | default: '독서' }}</span>
+        <span class="card-date">{{ post.date | date: "%Y.%m.%d" }}</span>
+      </div>
+      <h2 class="card-title">
+        <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+      </h2>
+      <p class="card-excerpt">
+        {{ post.excerpt | strip_html | truncatewords: 24 }}
+      </p>
+      
+      {% if post.book_info %}
+      <div class="book-badge-strip">
+        <span class="book-author">『{{ post.book_info.title }}』 {{ post.book_info.author }}</span>
+        <span class="book-stars">★ {{ post.book_info.rating | default: "5.0" }}</span>
+      </div>
+      {% endif %}
+    </div>
+  </article>
+  {% endfor %}
+</div>
