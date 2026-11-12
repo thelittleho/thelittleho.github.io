@@ -3,11 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your awesome title</title>
-  <meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.">
+  <title>The Little Forest Archive</title>
+  <meta name="description" content="숲의 고요함 속에서 읽고, 사유하고, 기록하는 공간입니다.">
   
   <link rel="stylesheet" href="/assets/css/main.css">
-  <link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Your awesome title" />
+  <link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="The Little Forest Archive" />
+
+  <!-- MathJax 3 for LaTeX rendering ($...$ and $$...$$) -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      startup: {
+        ready: function () {
+          MathJax.startup.defaultReady();
+          if (MathJax.startup.document && MathJax.startup.document.inputJax) {
+            var tex = MathJax.startup.document.inputJax.find(function (jax) { return jax.name === 'TeX'; });
+            if (tex && tex.preFilters) {
+              tex.preFilters.add(function (args) {
+                var math = args.math;
+                if (math && math.display) {
+                  var str = (math.math || '').trim();
+                  // Automatically wrap in aligned / gathered if \\ is used outside a multiline environment
+                  if (str.indexOf('\\\\') !== -1 && !str.match(/^\\begin\{(aligned|align|gather|gathered|cases|matrix|bmatrix|pmatrix|vmatrix|Vmatrix|split|multline)\}/)) {
+                    if (str.indexOf('&') !== -1) {
+                      math.math = '\\begin{aligned}' + str + '\\end{aligned}';
+                    } else {
+                      math.math = '\\begin{gathered}' + str + '\\end{gathered}';
+                    }
+                  }
+                }
+              });
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
   <div id="reading-progress"></div>
@@ -15,10 +55,11 @@
   <div class="header-container">
     <a href="/" class="brand-logo">
       <div class="brand-icon">🍃</div>
-      <span>Your awesome title</span>
+      <span>The Little Forest Archive</span>
     </a>
     <nav class="site-nav">
-      <a href="/" class="nav-link active">서재</a>
+      <a href="/" class="nav-link active">블로그</a>
+      <a href="/library/" class="nav-link ">서재</a>
       <a href="/bookshelf/" class="nav-link ">책장</a>
     </nav>
   </div>
@@ -27,210 +68,102 @@
 
   <main class="main-wrapper">
     <section class="hero-section">
-  <div class="hero-badge">🌱 사유와 기록의 안식처</div>
-  <h1 class="hero-title">숲의 고요함 속에서<br>읽고, 사유하고, 기록합니다.</h1>
+  <div class="hero-badge">💡 기술과 사유의 기록</div>
+  <h1 class="hero-title">호기심과 논리로 탐구하고,<br>단단한 생각으로 기록합니다.</h1>
   <p class="hero-desc">
-    바쁜 일상에서 벗어나 책의 깊은 문장과 생각을 차분하게 정리하는 서재입니다. 
-    마음을 채운 독서 기록은 훗날 단단한 지식과 기술적 통찰로 이어집니다.
+    인공지능의 깊은 원리부터 컴퓨터 과학을 지탱하는 자료구조, 
+    그리고 기술의 물결 속에서 길어 올린 개발 철학과 사유를 차분하게 풀어냅니다.
   </p>
 </section>
 
-<!-- Category Filtering Tabs -->
+<!-- Category Filtering Tabs for Blog -->
 <div class="filter-tabs">
-  <button class="tab-btn active" onclick="filterCategory('all', this)">모든 기록 (5)</button>
-  <button class="tab-btn" onclick="filterCategory('인문', this)">인문 · 사색</button>
-  <button class="tab-btn" onclick="filterCategory('문학', this)">소설 · 문학</button>
-  <button class="tab-btn" onclick="filterCategory('성장', this)">성장 · 자기계발</button>
-  <button class="tab-btn" onclick="filterCategory('기술', this)">기술 · 개발 노트</button>
+  <button class="tab-btn active" onclick="filterCategory('all', this)">전체 글</button>
+  <button class="tab-btn" onclick="filterCategory('인공지능', this)">인공지능 (AI)</button>
+  <button class="tab-btn" onclick="filterCategory('자료구조', this)">자료구조</button>
+  <button class="tab-btn" onclick="filterCategory('생각', this)">생각 · 에세이</button>
 </div>
 
-<!-- Posts Grid -->
+<!-- Blog Posts Grid -->
 <div class="posts-grid">
   
-  <article class="post-card" data-category="인문">
-    <a href="/%EC%9D%B8%EB%AC%B8/2026/10/31/walden-solitude-reflection.html">
-      <div class="card-banner">
-        
-        <div class="mini-book-wrapper">
-          
-          <div class="real-book-cover">
-            <img src="/assets/images/books/walden.jpg" alt="월든 (Walden)" class="real-book-img">
-            <div class="real-book-spine-crease"></div>
-          </div>
-          
-        </div>
-      </div>
-    </a>
-    <div class="card-content">
-      <div class="card-meta">
-        <span class="card-tag">인문</span>
-        <span class="card-date">2026.10.31</span>
-      </div>
-      <h2 class="card-title">
-        <a href="/%EC%9D%B8%EB%AC%B8/2026/10/31/walden-solitude-reflection.html">소음 가득한 세상에서 나만의 숲을 찾는 법</a>
-      </h2>
-      <p class="card-excerpt">
-        현대 사회는 언제나 우리에게 무언가를 끊임없이 더 소유하고, 더 바쁘게 살아가라고 재촉합니다. 스마트폰 알림과 쏟아지는 피드 속에서 온전한 나만의 시간을 갖기란 점점 더 어려워집니다....
-      </p>
-      
-      
-      <div class="book-badge-strip">
-        <span class="book-author">『월든 (Walden)』 헨리 데이비드 소로</span>
-        <span class="book-stars">★ 5.0</span>
-      </div>
-      
-    </div>
-  </article>
   
-  <article class="post-card" data-category="문학">
-    <a href="/%EB%AC%B8%ED%95%99/2026/10/30/demian-finding-myself.html">
-      <div class="card-banner">
-        
-        <div class="mini-book-wrapper">
-          
-          <div class="real-book-cover">
-            <img src="/assets/images/books/demian.jpg" alt="데미안" class="real-book-img">
-            <div class="real-book-spine-crease"></div>
-          </div>
-          
-        </div>
-      </div>
-    </a>
-    <div class="card-content">
-      <div class="card-meta">
-        <span class="card-tag">문학</span>
-        <span class="card-date">2026.10.30</span>
-      </div>
-      <h2 class="card-title">
-        <a href="/%EB%AC%B8%ED%95%99/2026/10/30/demian-finding-myself.html">알을 깨고 나오는 모든 방황하는 영혼들에게</a>
-      </h2>
-      <p class="card-excerpt">
-        학창 시절 시험을 위해 의무적으로 읽었던 고전과, 어른이 되어 삶의 혼란 속에서 다시 마주한 고전은 완전히 다른 책으로 다가옵니다. 헤르만 헤세의 『데미안』이 바로 그런...
-      </p>
-      
-      
-      <div class="book-badge-strip">
-        <span class="book-author">『데미안』 헤르만 헤세</span>
-        <span class="book-stars">★ 4.8</span>
-      </div>
-      
-    </div>
-  </article>
   
-  <article class="post-card" data-category="기술">
-    <a href="/%EA%B8%B0%EC%88%A0/2026/10/29/programmer-pragmatic-reading.html">
-      <div class="card-banner">
-        
-        <div class="mini-book-wrapper">
+  <article class="post-card blog-post-card" data-category="인공지능">
+    <a href="/%EC%9D%B8%EA%B3%B5%EC%A7%80%EB%8A%A5/2026/11/12/Classification.html">
+      <div class="blog-card-banner banner-인공지능">
+        <div class="blog-banner-watermark">
+          AI
           
-          <div class="real-book-cover">
-            <img src="/assets/images/books/pragmatic.jpg" alt="실용주의 프로그래머" class="real-book-img">
-            <div class="real-book-spine-crease"></div>
+        </div>
+        <div class="blog-banner-content">
+          <div class="blog-banner-icon">
+            ✦
+            
           </div>
-          
+          <span class="blog-banner-topic">
+            Artificial Intelligence
+            
+          </span>
         </div>
       </div>
     </a>
     <div class="card-content">
       <div class="card-meta">
-        <span class="card-tag">기술</span>
-        <span class="card-date">2026.10.29</span>
-      </div>
-      <h2 class="card-title">
-        <a href="/%EA%B8%B0%EC%88%A0/2026/10/29/programmer-pragmatic-reading.html">좋은 코드를 쓰기 전에, 먼저 세상을 읽는 법</a>
-      </h2>
-      <p class="card-excerpt">
-        많은 개발자들이 새로운 프레임워크나 최신 라이브러리의 문법을 익히는 데 대부분의 시간을 쏟습니다. 하지만 연차가 쌓이고 복잡한 시스템을 다루게 될수록 절실히 느끼는 것은, 기술보다 앞서는...
-      </p>
-      
-      
-      <div class="book-badge-strip">
-        <span class="book-author">『실용주의 프로그래머』 데이비드 토머스, 앤드루 헌트</span>
-        <span class="book-stars">★ 4.9</span>
-      </div>
-      
-    </div>
-  </article>
-  
-  <article class="post-card" data-category="문학">
-    <a href="/%EB%AC%B8%ED%95%99/2026/10/28/steppenwolf-music-reading.html">
-      <div class="card-banner">
-        
-        <div class="mini-book-wrapper">
-          
-          <div class="real-book-cover">
-            <img src="/assets/images/books/steppenwolf.jpg" alt="황야의 이리" class="real-book-img">
-            <div class="real-book-spine-crease"></div>
-          </div>
-          
+        <span class="card-tag tag-인공지능">인공지능</span>
+        <div class="card-meta-right">
+          <span class="card-date">2026.11.12</span>
         </div>
       </div>
-    </a>
-    <div class="card-content">
-      <div class="card-meta">
-        <span class="card-tag">문학</span>
-        <span class="card-date">2026.10.28</span>
-      </div>
       <h2 class="card-title">
-        <a href="/%EB%AC%B8%ED%95%99/2026/10/28/steppenwolf-music-reading.html">내면의 늑대와 춤추는 법을 배우다</a>
+        <a href="/%EC%9D%B8%EA%B3%B5%EC%A7%80%EB%8A%A5/2026/11/12/Classification.html">Classification : Perceptron</a>
       </h2>
-      <p class="card-excerpt">
-        우리는 마음속에 얼마나 많은 분열된 자아를 품고 살아갈까요? 자신을 ‘고결한 인간’과 ‘고독한 야수’ 둘로만 나누어 비관하던 주인공 하리 할러는 마법 극장의 문을 열고 나서야...
-      </p>
       
+      <p class="card-excerpt">분류를 위한 가장 기초적인 방식인 퍼셉트론의 원리에 대해 알아봅니다.</p>
       
-      <div class="book-badge-strip">
-        <span class="book-author">『황야의 이리』 헤르만 헤세</span>
-        <span class="book-stars">★ 4.8</span>
-      </div>
-      
-    </div>
-  </article>
-  
-  <article class="post-card" data-category="성장">
-    <a href="/%EC%84%B1%EC%9E%A5/2026/10/27/atomic-habits-reading.html">
-      <div class="card-banner">
-        
-        <div class="mini-book-wrapper">
-          
-          <div class="real-book-cover">
-            <img src="/assets/images/books/atomic_habits.jpg" alt="아주 작은 습관의 힘" class="real-book-img">
-            <div class="real-book-spine-crease"></div>
-          </div>
-          
-        </div>
-      </div>
-    </a>
-    <div class="card-content">
-      <div class="card-meta">
-        <span class="card-tag">성장</span>
-        <span class="card-date">2026.10.27</span>
-      </div>
-      <h2 class="card-title">
-        <a href="/%EC%84%B1%EC%9E%A5/2026/10/27/atomic-habits-reading.html">매일 1%의 변화가 만들어내는 기적</a>
-      </h2>
-      <p class="card-excerpt">
-        원대한 목표를 세우고 얼마 지나지 않아 의지박약으로 좌절했던 경험은 누구에게나 있습니다. 제임스 클리어는 실패의 원인이 의지력이 아니라 ‘시스템’에 있다고 단언합니다.
 
-      </p>
       
-      
-      <div class="book-badge-strip">
-        <span class="book-author">『아주 작은 습관의 힘』 제임스 클리어</span>
-        <span class="book-stars">★ 5.0</span>
+      <div class="blog-tags-strip">
+        
+        <span class="blog-tag-item">#인공지능</span>
+        
+        <span class="blog-tag-item">#Classification</span>
+        
+        <span class="blog-tag-item">#Perceptron</span>
+        
       </div>
       
     </div>
   </article>
+  
+  
+  
+  
+  
+  
+  
   
 </div>
+
+<!-- Quick Link to Library & Bookshelf -->
+<section class="reading-bridge-card">
+  <div class="bridge-left">
+    <span class="bridge-badge">📚 함께 읽는 서재</span>
+    <h3>사유의 뿌리가 된 책들의 기록이 궁금하다면?</h3>
+    <p>완독한 도서들의 깊은 서평과 입체 북 타워를 서재와 책장에서 만나보세요.</p>
+  </div>
+  <div class="bridge-right">
+    <a href="/library/" class="tab-btn bridge-btn">서재 둘러보기 →</a>
+    <a href="/bookshelf/" class="tab-btn bridge-btn" style="background: var(--forest-primary); color: #fff;">책장 보기 📖</a>
+  </div>
+</section>
 
   </main>
 
   <footer class="site-footer">
   <div class="footer-inner">
     <div class="footer-copy">
-      © 2026 <strong>Your awesome title</strong>. All rights reserved.
+      © 2026 <strong>The Little Forest Archive</strong>. All rights reserved.
     </div>
     <div class="footer-quote">
       "책 한 권은 우리 안의 꽁꽁 얼어붙은 바다를 깨는 도끼여야 한다." — 프란츠 카프카

@@ -8,6 +8,46 @@
   
   <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
   {% feed_meta %}
+
+  <!-- MathJax 3 for LaTeX rendering ($...$ and $$...$$) -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      startup: {
+        ready: function () {
+          MathJax.startup.defaultReady();
+          if (MathJax.startup.document && MathJax.startup.document.inputJax) {
+            var tex = MathJax.startup.document.inputJax.find(function (jax) { return jax.name === 'TeX'; });
+            if (tex && tex.preFilters) {
+              tex.preFilters.add(function (args) {
+                var math = args.math;
+                if (math && math.display) {
+                  var str = (math.math || '').trim();
+                  // Automatically wrap in aligned / gathered if \\ is used outside a multiline environment
+                  if (str.indexOf('\\\\') !== -1 && !str.match(/^\\begin\{(aligned|align|gather|gathered|cases|matrix|bmatrix|pmatrix|vmatrix|Vmatrix|split|multline)\}/)) {
+                    if (str.indexOf('&') !== -1) {
+                      math.math = '\\begin{aligned}' + str + '\\end{aligned}';
+                    } else {
+                      math.math = '\\begin{gathered}' + str + '\\end{gathered}';
+                    }
+                  }
+                }
+              });
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
   {% include header.html %}

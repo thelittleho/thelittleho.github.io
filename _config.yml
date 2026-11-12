@@ -31,6 +31,13 @@ theme: minima
 plugins:
   - jekyll-feed
 
+kramdown:
+  math_engine: mathjax
+
+include:
+  - _posts/blog/images
+  - _posts/library/images
+
 # Exclude from processing.
 # The following items will not be processed, by default.
 # Any item listed under the `exclude:` key here will be automatically added to

@@ -19,7 +19,7 @@ layout: default
     {% assign cat_name = page.categories[0] | default: '독서' %}
     <div class="mini-book-wrapper">
       {% if page.book_info.cover_url %}
-      <div class="real-book-cover" style="width: 88px; height: 126px;">
+      <div class="real-book-cover" style="width: 106px; height: 152px;">
         <img src="{{ page.book_info.cover_url | relative_url }}" alt="{{ page.book_info.title }}" class="real-book-img">
         <div class="real-book-spine-crease"></div>
       </div>
@@ -43,11 +43,133 @@ layout: default
   </div>
   {% endif %}
 
-  <div class="post-body">
+  <!-- Table of Contents (auto-generated) -->
+  <div class="post-toc-wrapper" id="post-toc-wrapper" style="display:none;">
+    <div class="post-toc-title">목차</div>
+    <ul class="post-toc" id="post-toc"></ul>
+  </div>
+
+  <div class="post-body" id="post-body">
     {{ content }}
   </div>
 
-  <div style="margin-top: 60px; text-align: center;">
-    <a href="{{ '/' | relative_url }}" class="tab-btn" style="display: inline-block;">← 서재 목록으로 돌아가기</a>
+  <div style="margin-top: 60px; text-align: center; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+    {% if page.book_info %}
+    <a href="{{ '/library/' | relative_url }}" class="tab-btn" style="display: inline-block;">← 서재 목록으로 돌아가기</a>
+    <a href="{{ '/bookshelf/' | relative_url }}" class="tab-btn" style="display: inline-block; background: var(--forest-primary); color: #fff;">책장 보기 📚</a>
+    {% else %}
+    <a href="{{ '/' | relative_url }}" class="tab-btn" style="display: inline-block;">← 블로그 글 목록으로 돌아가기</a>
+    {% endif %}
   </div>
 </article>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const siteBase = '{{ "" | relative_url }}';
+    const body = document.getElementById('post-body');
+    if (!body) return;
+
+    // 1. ==highlight== → <mark> converter
+    function convertHighlights(node) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.textContent;
+        if (text.indexOf('==') === -1) return;
+        const parts = text.split(/==(.*?)==/g);
+        if (parts.length <= 1) return;
+        const frag = document.createDocumentFragment();
+        for (let i = 0; i < parts.length; i++) {
+          if (i % 2 === 0) {
+            frag.appendChild(document.createTextNode(parts[i]));
+          } else {
+            const mark = document.createElement('mark');
+            mark.textContent = parts[i];
+            frag.appendChild(mark);
+          }
+        }
+        node.parentNode.replaceChild(frag, node);
+      } else if (node.nodeType === Node.ELEMENT_NODE && !['PRE', 'CODE', 'SCRIPT', 'STYLE'].includes(node.tagName)) {
+        // Walk children (copy array first since we mutate)
+        Array.from(node.childNodes).forEach(convertHighlights);
+      }
+    }
+    convertHighlights(body);
+
+    // 2. Table of Contents generator (nested hierarchy)
+    const headings = body.querySelectorAll('h1, h2, h3');
+    const tocList = document.getElementById('post-toc');
+    const tocWrapper = document.getElementById('post-toc-wrapper');
+    if (headings.length >= 2 && tocList && tocWrapper) {
+      let currentH1 = null;
+      let currentH2 = null;
+      let subListH1 = null;
+      let subListH2 = null;
+
+      headings.forEach((h, idx) => {
+        if (!h.id) h.id = 'section-' + idx;
+        const a = document.createElement('a');
+        a.href = '#' + h.id;
+        a.textContent = h.textContent;
+        const li = document.createElement('li');
+        li.appendChild(a);
+
+        const tag = h.tagName;
+        if (tag === 'H1') {
+          li.className = 'toc-h1';
+          tocList.appendChild(li);
+          currentH1 = li;
+          currentH2 = null;
+          subListH1 = null;
+          subListH2 = null;
+        } else if (tag === 'H2') {
+          li.className = 'toc-h2';
+          if (currentH1) {
+            if (!subListH1) {
+              subListH1 = document.createElement('ul');
+              subListH1.className = 'toc-sub';
+              currentH1.appendChild(subListH1);
+            }
+            subListH1.appendChild(li);
+          } else {
+            tocList.appendChild(li);
+          }
+          currentH2 = li;
+          subListH2 = null;
+        } else if (tag === 'H3') {
+          li.className = 'toc-h3';
+          if (currentH2) {
+            if (!subListH2) {
+              subListH2 = document.createElement('ul');
+              subListH2.className = 'toc-sub';
+              currentH2.appendChild(subListH2);
+            }
+            subListH2.appendChild(li);
+          } else if (subListH1) {
+            subListH1.appendChild(li);
+          } else {
+            tocList.appendChild(li);
+          }
+        }
+      });
+      tocWrapper.style.display = 'block';
+    }
+
+    // 3. Smart image resolver for relative image paths in post body
+    body.querySelectorAll('img').forEach(img => {
+      const rawSrc = img.getAttribute('src');
+      if (!rawSrc) return;
+      if (!rawSrc.startsWith('http://') && !rawSrc.startsWith('https://') && !rawSrc.startsWith('data:')) {
+        const cleanPath = rawSrc.replace(/^\.\//, '');
+        img.onerror = function() {
+          if (!this.dataset.tried) {
+            this.dataset.tried = '1';
+            this.src = siteBase + '/assets/images/' + cleanPath.replace(/^images\//, '');
+          } else if (this.dataset.tried === '1') {
+            this.dataset.tried = '2';
+            const filename = cleanPath.split('/').pop();
+            this.src = siteBase + '/assets/images/posts/' + filename;
+          }
+        };
+      }
+    });
+  });
+</script>

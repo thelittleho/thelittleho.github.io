@@ -6,8 +6,9 @@
       <span>{{ site.title | default: "The Little Forest" }}</span>
     </a>
     <nav class="site-nav">
-      <a href="{{ '/' | relative_url }}" class="nav-link {% if page.url == '/' %}active{% endif %}">서재</a>
-      <a href="{{ '/bookshelf/' | relative_url }}" class="nav-link {% if page.url == '/bookshelf/' %}active{% endif %}">책장</a>
+      <a href="{{ '/' | relative_url }}" class="nav-link {% if page.url == '/' %}active{% endif %}">블로그</a>
+      <a href="{{ '/library/' | relative_url }}" class="nav-link {% if page.url contains '/library' %}active{% endif %}">서재</a>
+      <a href="{{ '/bookshelf/' | relative_url }}" class="nav-link {% if page.url contains '/bookshelf' %}active{% endif %}">책장</a>
     </nav>
   </div>
 </header>
